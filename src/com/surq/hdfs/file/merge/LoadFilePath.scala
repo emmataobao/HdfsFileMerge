@@ -20,7 +20,7 @@ object LoadFilePath {
    * 获取config文件夹路径
    */
   val getConfigPath = getJarPath + "/../config/"
-//  // TODO
+  // TODO
 //   val getConfigPath ="/moxiu/workspace/HdfsFileMerge/config/"
 
   /**
