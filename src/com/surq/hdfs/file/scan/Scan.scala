@@ -12,7 +12,7 @@ object Scan {
   val Array(limitFileSize, input, delEmptyFileFlg) = Array("limitFileSize", "input", "delEmptyFileFlg")
 
   def main(args: Array[String]) {
-    if (args(0).trim.toUpperCase.endsWith( "HELP") || args(1).trim.toUpperCase.endsWith( "HELP") ) printArgInfo
+    if (args(0).trim.toUpperCase.endsWith("HELP") || args(1).trim.toUpperCase.endsWith("HELP")) printArgInfo
     else {
       require(args.size == 3 * 2, printArgInfo)
       // 1、参数解析
@@ -40,17 +40,19 @@ object Scan {
               if (lastFolder_flg > 0) scanDir(f.getPath)
               else {
                 // 去除_SUCCESS文件后，如果没有文件，则删除此目录，否则记录此目录
-                val fileCount = listStatus.map(fileStatus => {
-                  // 删除无效的0字节文件
-                  val fileSize = fileStatus.getLen
-                  if (fileSize == 0l && (fileStatus.getPath.getName) != "_SUCCESS") {
-                    if (delEmptyFileFlg) {
+                val fileCount = listStatus.map(file => {
+                  val fileSize = file.getLen
+                  // 去除_SUCCESS文件后
+                  if ((file.getPath.getName) != "_SUCCESS") {
+                    // 删除无效的0字节文件
+                    if (fileSize == 0l && delEmptyFileFlg) {
                       HDFSFileSytem.delete(f.getPath, false)
                       Console println "delete empty File: " + f.getPath
-                    }
-                    None
-                    // 对大于120M的文件不进行合并
-                  } else if (fileSize >= 1024l * 1024 * fileLimit) None else Some(f)
+                      None
+                      // 对大于120M的文件不进行合并
+                    } else if (fileSize >= 1024l * 1024 * fileLimit) None else Some(f)
+                  } else None
+
                 }).filter(_ != None)
                 // 1个文件以上才会合并
                 if (fileCount.size > 1) folderList += f.getPath.toString
@@ -88,7 +90,7 @@ object Scan {
     Console println s"--$limitFileSize ..............如果一个文件夹中存在两个小于此值的文件，文件目录将被列出。单位（M）"
     Console println "=================================================================="
     Console println "功能："
-      Console println "入口函数：com.surq.hdfs.file.scan.Scan"
+    Console println "入口函数：com.surq.hdfs.file.scan.Scan"
     Console println "递归遍历指定的input路径,找出存放文件的最后一级文件夹目录。在遍历过程中将删除0字节的文件（忽略【_SUCCESS】）。"
     Console println "文件夹中存在多于一个小于limitFileSize值的文件，此目录将被列出。"
   }
