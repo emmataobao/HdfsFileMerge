@@ -161,6 +161,6 @@ object Main {
    * 计算需要合并的文件列表,以及文件大小
    */
   def getFileList(hdfs: FileSystem, dir: String, fileType: String) =
-    if (fileType.trim == "all") hdfs.listStatus(new Path(dir)).map(f => (f.getPath.toString, f.getLen))
+    if (fileType.trim == "all") hdfs.listStatus(new Path(dir)).map(f => (f.getPath.toString, f.getLen)).filter(! _._1.endsWith("_SUCCESS"))
     else hdfs.listStatus(new Path(dir)).filter(f => f.getPath.toString.endsWith(fileType.trim)).map(f => (f.getPath.toString, f.getLen))
 }

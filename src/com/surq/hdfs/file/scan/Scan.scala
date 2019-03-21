@@ -55,7 +55,7 @@ object Scan {
 
                 }).filter(_ != None)
                 // 1个文件以上才会合并
-                if (fileCount.size > 1) folderList += f.getPath.toString
+                if (fileCount.size > 1) folderList +="Owner:"+ f.getOwner +"\t"+ f.getPath.toString
               }
             }
           })
